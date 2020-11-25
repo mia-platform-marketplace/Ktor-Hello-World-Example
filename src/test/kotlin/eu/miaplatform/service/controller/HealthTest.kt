@@ -1,10 +1,12 @@
-package eu.miaplatform.service
+package eu.miaplatform.service.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import eu.miaplatform.service.StatusService
 import eu.miaplatform.service.client.CrudClientInterface
 import eu.miaplatform.service.client.HeadersToProxy
 import eu.miaplatform.service.client.RetrofitClient
 import eu.miaplatform.service.model.HealthBodyResponse
+import eu.miaplatform.service.module
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
