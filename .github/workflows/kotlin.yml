@@ -2,7 +2,7 @@ name: kotlin gradle CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, BMP-774-load-kotlin-template]
   pull_request:
     branches: [main]
 
