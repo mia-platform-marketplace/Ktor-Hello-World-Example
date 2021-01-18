@@ -1,4 +1,4 @@
-name: kotlin gradle CI
+name: ktor gradle CI
 
 on:
   push:
