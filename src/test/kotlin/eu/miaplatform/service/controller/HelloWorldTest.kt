@@ -50,7 +50,7 @@ class HelloWorldTest {
             handleRequest(HttpMethod.Get, "/hello") {
                 addHeader("token", "token")
             }.apply {
-                assertTrue { response.status()?.value != HttpStatusCode.OK.value }
+                assertTrue { response.status()?.value == HttpStatusCode.OK.value }
 
                 val expectedBody = objectMapper.writeValueAsString(
                     HelloWorldResponse(
