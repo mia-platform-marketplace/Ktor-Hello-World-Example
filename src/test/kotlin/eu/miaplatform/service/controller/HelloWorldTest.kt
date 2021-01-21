@@ -47,14 +47,11 @@ class HelloWorldTest {
                 headersToProxy = HeadersToProxy()
             )
         }) {
-            handleRequest(HttpMethod.Get, "/hello") {
-                addHeader("token", "token")
-            }.apply {
+            handleRequest(HttpMethod.Get, "/hello") {}.apply {
                 assertTrue { response.status()?.value == HttpStatusCode.OK.value }
 
                 val expectedBody = objectMapper.writeValueAsString(
                     HelloWorldResponse(
-                        "token",
                         null,
                         null,
                         "Hello world!"
@@ -75,63 +72,15 @@ class HelloWorldTest {
                 headersToProxy = HeadersToProxy()
             )
         }) {
-            handleRequest(HttpMethod.Get, "/hello?queryParam=param") {
-                addHeader("token", "token")
-            }.apply {
+            handleRequest(HttpMethod.Get, "/hello?queryParam=param") {}.apply {
                 assertTrue { response.status()?.value == HttpStatusCode.OK.value }
 
                 val expectedBody = objectMapper.writeValueAsString(
                     HelloWorldResponse(
-                        "token",
                         null,
                         "param",
                         "Hello world!"
                     )
-                )
-                assertEquals(expectedBody, response.content)
-            }
-        }
-    }
-
-    @Test
-    @KtorExperimentalAPI
-    fun `Get should return unauthorized if token is invalid`() {
-        withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
-        }) {
-            handleRequest(HttpMethod.Get, "/hello") {
-                addHeader("token", "invalid")
-            }.apply {
-                assertTrue { response.status()?.value == HttpStatusCode.Unauthorized.value }
-
-                val expectedBody = objectMapper.writeValueAsString(
-                    ErrorResponse(1001, "the user is not authorized")
-                )
-                assertEquals(expectedBody, response.content)
-            }
-        }
-    }
-
-    @Test
-    @KtorExperimentalAPI
-    fun `Get should return bad request if token is missing`() {
-        withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
-        }) {
-            handleRequest(HttpMethod.Get, "/hello") {
-            }.apply {
-                assertTrue { response.status()?.value == HttpStatusCode.BadRequest.value }
-
-                val expectedBody = objectMapper.writeValueAsString(
-                    ErrorResponse(1000, "Parameter specified as non-null is null: method eu.miaplatform.service.model.request.HelloWorldGetRequest.<init>, parameter token")
                 )
                 assertEquals(expectedBody, response.content)
             }
@@ -155,77 +104,16 @@ class HelloWorldTest {
 
             handleRequest(HttpMethod.Post, "/hello/1234") {
                 addHeader("Content-Type", "application/json")
-                addHeader("token", "token")
                 setBody(body)
             }.apply {
                 assertTrue { response.status()?.value == HttpStatusCode.OK.value }
 
                 val expectedBody = objectMapper.writeValueAsString(
                     HelloWorldResponse(
-                        "token",
                         "1234",
                         null,
                         "Hello world name surname!"
                     )
-                )
-                assertEquals(expectedBody, response.content)
-            }
-        }
-    }
-
-    @Test
-    @KtorExperimentalAPI
-    fun `Post should return unauthorize if token is invalid`() {
-
-        withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
-        }) {
-            val body = objectMapper.writeValueAsString(
-                HelloWorldRequestBody("name", "surname")
-            )
-
-            handleRequest(HttpMethod.Post, "/hello/1234") {
-                addHeader("Content-Type", "application/json")
-                addHeader("token", "invalid")
-                setBody(body)
-            }.apply {
-                assertTrue { response.status()?.value == HttpStatusCode.Unauthorized.value }
-
-                val expectedBody = objectMapper.writeValueAsString(
-                    ErrorResponse(1001, "the user is not authorized")
-                )
-                assertEquals(expectedBody, response.content)
-            }
-        }
-    }
-
-    @Test
-    @KtorExperimentalAPI
-    fun `Post should return bad request if token is missing`() {
-
-        withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
-        }) {
-            val body = objectMapper.writeValueAsString(
-                HelloWorldRequestBody("name", "surname")
-            )
-
-            handleRequest(HttpMethod.Post, "/hello/1234") {
-                addHeader("Content-Type", "application/json")
-                setBody(body)
-            }.apply {
-                assertTrue { response.status()?.value == HttpStatusCode.BadRequest.value }
-
-                val expectedBody = objectMapper.writeValueAsString(
-                    ErrorResponse(1000, "Parameter specified as non-null is null: method eu.miaplatform.service.model.request.HelloWorldPostRequest.<init>, parameter token")
                 )
                 assertEquals(expectedBody, response.content)
             }
@@ -249,7 +137,6 @@ class HelloWorldTest {
 
             handleRequest(HttpMethod.Post, "/hello/1234") {
                 addHeader("Content-Type", "application/json")
-                addHeader("token", "token")
                 setBody(body)
             }.apply {
                 assertTrue { response.status()?.value == HttpStatusCode.BadRequest.value }
@@ -281,13 +168,11 @@ class HelloWorldTest {
             )
         }) {
             handleRequest(HttpMethod.Get, "/hello/with-call") {
-                addHeader("token", "token")
             }.apply {
                 assertTrue { response.status()?.value == HttpStatusCode.OK.value }
 
                 val expectedBody = objectMapper.writeValueAsString(
                     HelloWorldResponse(
-                        "token",
                         null,
                         null,
                         "Hello world! Book list: book1, book2"
@@ -317,7 +202,6 @@ class HelloWorldTest {
             )
         }) {
             handleRequest(HttpMethod.Get, "/hello/with-call") {
-                addHeader("token", "token")
             }.apply {
                 assertTrue { response.status()?.value == HttpStatusCode.InternalServerError.value }
 
@@ -348,13 +232,11 @@ class HelloWorldTest {
             )
         }) {
             handleRequest(HttpMethod.Get, "/hello/with-call?queryParam=param") {
-                addHeader("token", "token")
             }.apply {
                 assertTrue { response.status()?.value == HttpStatusCode.OK.value }
 
                 val expectedBody = objectMapper.writeValueAsString(
                     HelloWorldResponse(
-                        "token",
                         null,
                         "param",
                         "Hello world! Book list: book1, book2"
@@ -365,68 +247,6 @@ class HelloWorldTest {
         }
         mockServer.close()
     }
-
-    @Test
-    @KtorExperimentalAPI
-    fun `Get with call should return unauthorized if token is invalid`() {
-        mockServer = ClientAndServer.startClientAndServer(port)
-        mockServer.setup(
-            "GET",
-            "/v2/books",
-            200,
-            objectMapper.writeValueAsString(listOf("book1", "book2"))
-        )
-        withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
-        }) {
-            handleRequest(HttpMethod.Get, "/hello/with-call") {
-                addHeader("token", "invalid")
-            }.apply {
-                assertTrue { response.status()?.value == HttpStatusCode.Unauthorized.value }
-
-                val expectedBody = objectMapper.writeValueAsString(
-                    ErrorResponse(1001, "the user is not authorized")
-                )
-                assertEquals(expectedBody, response.content)
-            }
-        }
-        mockServer.close()
-    }
-
-    @Test
-    @KtorExperimentalAPI
-    fun `Get with call should return bad request if token is missing`() {
-        mockServer = ClientAndServer.startClientAndServer(port)
-        mockServer.setup(
-            "GET",
-            "/v2/books",
-            200,
-            objectMapper.writeValueAsString(listOf("book1", "book2"))
-        )
-        withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
-        }) {
-            handleRequest(HttpMethod.Get, "/hello/with-call") {
-            }.apply {
-                assertTrue { response.status()?.value == HttpStatusCode.BadRequest.value }
-
-                val expectedBody = objectMapper.writeValueAsString(
-                    ErrorResponse(1000, "Parameter specified as non-null is null: method eu.miaplatform.service.model.request.HelloWorldGetRequest.<init>, parameter token")
-                )
-                assertEquals(expectedBody, response.content)
-            }
-        }
-        mockServer.close()
-    }
-
 
     private fun MockServerClient.setup(
         requestMethod:String,
