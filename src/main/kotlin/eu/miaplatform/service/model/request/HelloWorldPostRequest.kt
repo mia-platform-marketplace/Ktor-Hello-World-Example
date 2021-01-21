@@ -9,5 +9,5 @@ data class HelloWorldPostRequest (
     val token: String,
 
     @PathParam("Description of the param")
-    val pathParam: String?
+    val pathParam: String
 )
