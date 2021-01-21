@@ -29,12 +29,7 @@ fun helloWorld(application: Application, crudClient: RetrofitClient<CrudClientIn
                     info("The description of the endpoint")
                 ) { params ->
 
-                    if(params.token == "invalid") {
-                        throw UnauthorizedException(1001, "the user is not authorized")
-                    }
-
                     val response = HelloWorldResponse(
-                        params.token,
                         null,
                         params.queryParam,
                         "Hello world!"
@@ -47,12 +42,7 @@ fun helloWorld(application: Application, crudClient: RetrofitClient<CrudClientIn
                     info("The description of the endpoint")
                 ) { params, requestBody ->
 
-                    if(params.token == "invalid") {
-                        throw UnauthorizedException(1001, "the user is not authorized")
-                    }
-
                     val response = HelloWorldResponse(
-                        params.token,
                         params.pathParam,
                         null,
                         "Hello world ${requestBody.name} ${requestBody.surname}!"
@@ -64,10 +54,6 @@ fun helloWorld(application: Application, crudClient: RetrofitClient<CrudClientIn
                 route("/with-call").get<HelloWorldGetRequest, HelloWorldResponse>(
                     info("The description of the endpoint")
                 ) { params ->
-
-                    if(params.token == "invalid") {
-                        throw UnauthorizedException(1001, "the user is not authorized")
-                    }
 
                     val headers = headersToProxy.proxy(this.pipeline.context)
                     val booksCall = application.async {
@@ -81,7 +67,6 @@ fun helloWorld(application: Application, crudClient: RetrofitClient<CrudClientIn
                     }
 
                     val response = HelloWorldResponse(
-                        params.token,
                         null,
                         params.queryParam,
                         "Hello world! Book list: ${books.joinToString()}"
