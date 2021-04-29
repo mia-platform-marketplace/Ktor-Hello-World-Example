@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  target-branch: development
+  ignore:
+  - dependency-name: io.ktor:ktor-server-netty
+    versions:
+    - 1.5.1
+    - 1.5.2
