@@ -43,13 +43,39 @@ test {
     useJUnitPlatform()
 }
 
+// version props
+
+def generatedVersionDir = "${buildDir}/generated-version"
+
+sourceSets {
+    main {
+        output.dir(generatedVersionDir, builtBy: 'generateVersionProperties')
+    }
+}
+
+task generateVersionProperties {
+    doLast {
+        def propsFile = file "$generatedVersionDir/version.properties"
+        propsFile.parentFile.mkdirs()
+        def props = new Properties()
+        def projectVersion = rootProject.version.toString()
+        print("Project version: ${projectVersion}")
+        props.setProperty("version", projectVersion)
+        propsFile.withWriter { props.store(it, null) }
+    }
+}
+processResources.dependsOn generateVersionProperties
+build.dependsOn generateVersionProperties
+
+// jar
+
 jar {
     duplicatesStrategy(DuplicatesStrategy.INCLUDE)
 
     manifest {
         attributes(
                 'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' '),
-                'Main-Class': 'eu.miaplatform.service.ServiceApplicationKt'
+                'Main-Class': 'eu.miaplatform.ServiceApplicationKt'
         )
     }
 
